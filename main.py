@@ -4,6 +4,27 @@ import sys
 import matplotlib.pyplot as plt
 import numpy.random as random
 
+from lauchable import Launchable
+
+class Engine(Launchable):
+    def __init__(self):
+        # init les packages graphiques (matplotlib ?)
+        # gère les variables
+        pass
+
+    def start(self):
+        # generations paquets
+        # simulation
+        # plt.show()
+        pass
+
+    def stop(self):
+        # affiche le graph
+        # affiche les stats
+        pass
+
+
+    
 # loop
 # plot graphique
 # scenario / graph
@@ -68,28 +89,16 @@ def test():
     print(generate_packages())
     return 0
 
-def init():
-    # init les packages graphiques (matplotlib ?)
-    pass
 
-def start():
-    # generations paquets
-    # simulation
-    plt.show()
-    pass
 
-def stop():
-    # affiche le graph
-    # affiche les stats
-    pass
-
-def main(argc, argv):
-    init()
-    start()
-    stop()
-    test()
+def main(argc, kwargs):
+    # argv nolimit 0
+    print(kwargs)
+    engine = Engine() # gère des variables, avec default kwargs ?
+    engine.launch() # gère des variables ?
+    return 0
 
 if __name__ == '__main__':
-    print("début de projet :)")
-    sys.exit(main(len(sys.argv), sys.argv))
+    kwargs = { kwarg[0]:kwarg[1] for kwarg in [ args.split('=') for args in sys.argv if args.find('=') > 0 ] }
+    sys.exit(main(len(sys.argv), kwargs))
     
