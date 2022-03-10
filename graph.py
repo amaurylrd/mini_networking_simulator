@@ -46,7 +46,7 @@ class Graph():
         """
         neigbours = [self.__get_neighbours(vertex)]
         
-        for i in range(1, depth):
+        for _ in range(1, depth):
             next_neigbours = []
             
             for neigbour in neigbours[:-1]:
