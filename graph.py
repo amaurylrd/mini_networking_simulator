@@ -55,7 +55,7 @@ class Graph():
             if not next_neigbours:
                 return neigbours
             else:
-                neigbour.append(list(dict.fromkeys(next_neigbours)))
+                neigbours.append(list(dict.fromkeys(next_neigbours)))
 
         return neigbours
 
