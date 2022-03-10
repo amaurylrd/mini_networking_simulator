@@ -1,37 +1,31 @@
 #!/usr/bin/python
 
 import sys, time
-from typing import final
 import matplotlib.pyplot as plt
 import numpy.random as random
 
-from lauchable import Launchable
+from engine import Engine
+from network import Network
 
-class Engine(Launchable):
-    def __init__(self):
-        # init les packages graphiques (matplotlib ?)
-        # gère les variables
-        pass
 
-    def start(self):
-        test_loop()
-        # generations paquets
-        # simulation
-        # plt.show()
-        pass
 
-    def stop(self):
-        # affiche le graph
-        # affiche les stats
-        pass
 
 class Simulator(Engine):
-    def __init__(self):
+    def __init__(self, kwargs):
+        super().__init__(kwargs['maximum_tick'] if kwargs['maximum_tick'] else 0)
+        
+        self.network = Network([], [])
+        self.package_size = 100
+        self.normal_loc = 50.0
+        self.normal_scale = 2.0
         pass
     
-    #package_size = 100
-    #normal_loc = 50.0
-    #normal_scale = 2.0
+    def update(self, tick):
+        pass
+    
+    # package_size = 100
+    # normal_loc = 50.0
+    # normal_scale = 2.0
     def __generate_packages(package_size : int, normal_loc=0.0, normal_scale=1.0):
         """ Generates randomized packages from the specified parameters. 
 
@@ -52,36 +46,83 @@ class Simulator(Engine):
             packages.append(package)
         
         return packages
-    
-    def update_simulation():
-        pass
-    
-    def render_statistics():
-        pass
-    
 
-def test_loop():
-    TARGET_UPS = 60
-    FIXED_DELTA_TIME = 1000 / TARGET_UPS
-    MAX_ACCUMULATOR = 5 * FIXED_DELTA_TIME
+
+
+# OLSR / AODV
+
+
     
-    accumulator = 0
-    cycle_starting_time = time.time_ns()
-    while 1:
-        current_time = time.time_ns()
-        accumulator += (current_time - cycle_starting_time) / 1000000
-        cycle_starting_time = current_time
-        
-        if (accumulator > MAX_ACCUMULATOR):
-            accumulator = MAX_ACCUMULATOR
-        
-        while accumulator >= FIXED_DELTA_TIME:
-            #self.update(DELTA_TIME)
-            # update_simulation()
-            print("salut")
-            accumulator -= FIXED_DELTA_TIME
+    
+    # class Node():
+    #     def __init__(self, name):
+    #         """_summary_
+
+    #         Args:
+    #             name (string): the name of the node.
+    #         """
+    #         self.name = name
+    #         self.packages_in = [] # file de paquet arrivé
+    #         self.packages_out = [] # file fifo paquet au départ
+
+    #     def pre_update(self):
+    #         self.packages_out.extend(self.packages_in)
+    #         self.packages_in = []
             
-        # update_statistics
+    #     def post_update(self):
+    #         # scheduler prend un 
+    #         # random entre 0 et max
+    #         # package cycle_arrive + 1
+    #         # on move envoie > reception
+    #         pass
+            
+    # class Route():
+    #     def __init__(self, node_source, node_destination, route_throughput):
+    #         self.maximum_throughput = route_throughput
+    #         self.node_source = node_source
+    #         self.node_destination = node_destination
+        
+    #     def update(self):
+    #         self.current_throughput = random.randint(0, self.maximum_throughput + 1)
+        
+    
+    # def __init__(self):
+    #     self.nodes = [] # routeurs
+
+    # def add_traffic(node_source, node_destination):
+    #     pass
+    
+    # def add_node(self, node_name, routes): # routes list of tuple (network_node_name, network_route_throughput)
+    #     for (node, throughput) in routes:
+    #         if node in self.nodes:
+    #             self.add_route(node_name, node, throughput)
+    #     pass
+    
+    # def add_route(self, nodeA, nodeB, debit):
+    #     node_destination = {nodeB: debit}
+    #     self.nodes[nodeA].extend(node_destination)
+    #     pass
+    
+    # def update(self, tick):
+    #     for node in self.nodes:
+    #         node.pre_update()
+
+    #     for node in self.nodes:
+    #         node.post_update()
+        
+    # des nodes
+
+    # source / destination
+    # 
+
+
+
+
+
+
+
+
+
 
         
 # Débit max = 2  W (bande passant)  log 2 V (niveau significatifs) en  bit/s
@@ -118,18 +159,22 @@ def test_loop():
 # plt.grid()
 
 
-def main(argc, kwargs):
+def main(argc, argv, kwargs):
+    
     # parameters: 
     # nolimit 0
     # npackage mean
+    # scénario
     
-    #print(kwargs)
-    #test()
-    engine = Simulator() # gère des variables, avec default kwargs ?
-    engine.launch() # gère des variables ?
+    print(kwargs)
+    sys.exit(0)
+    engine = Simulator(kwargs) 
+    engine.launch()
     return 0
 
 if __name__ == '__main__':
     kwargs = { kwarg[0]:kwarg[1] for kwarg in [ args.split('=') for args in sys.argv if args.find('=') > 0 ] }
-    sys.exit(main(len(sys.argv), kwargs))
+    sys.exit(main(len(sys.argv), sys.argv, kwargs))
     
+
+# https://plotly.com/python/network-graphs/
