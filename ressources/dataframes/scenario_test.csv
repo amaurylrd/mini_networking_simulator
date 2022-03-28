@@ -1,0 +1,7 @@
+source,target,average_throughput,destination
+s,l1,200,d
+s,r1,100
+l1,l2,200
+r1,r2,100
+l2,d,50
+r2,d,100

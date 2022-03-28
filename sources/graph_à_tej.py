@@ -1,12 +1,12 @@
 class Graph():
     def __init__(self, edges=[]):
-        """ Constructs a graph with the specified edges.
+        """ Constructs a directed graph with the specified edges.
         
         Args:
             edges (list): the list of tuple within at least the 2 first elements are ordered nodes.
         """
         self._graph = {}
-
+        
         for edge_tuple in edges:
             for vertex in list(edge_tuple[:2]):
                 if not vertex in self._graph:
@@ -23,7 +23,7 @@ class Graph():
         """
         return list(self._graph.keys())
     
-    def get_edges(self):
+    def get_adjacency_list(self):
         """ Returns all the edges as an adjacency list.
 
         Returns:
@@ -31,8 +31,23 @@ class Graph():
         """
         return self._graph.copy()
     
-    def __get_neighbours(self, vertex):
-        return [ tuple[0] for tuple in self._graph[vertex] ]
+    def get_edges(self):
+        edges = []
+        
+        for source in self._graph:
+            for destination_tuple in self._graph[source]:
+                edges.append((source, destination_tuple[0]))
+        
+        return edges
+    
+    def get_weighted_edges(self):
+        edges = []
+        
+        for source in self._graph:
+            for destination_tuple in self._graph[source]:
+                edges.append((source, destination_tuple[0], destination_tuple[1]))
+
+        return edges
     
     def get_neighbours(self, vertex, depth=1):
         """ Returns the neighbours of the specified vertex (by default, with a depth of 1).
@@ -59,15 +74,23 @@ class Graph():
 
         return neigbours
 
-    def add_edge(self, edge):
-        for vertex in list(edge[:2]):
-            if not self._graph[vertex]:
-                self._graph[vertex] = []
-        
-        self._graph[edge[0]].append(edge[1:])
-        
+    def __get_neighbours(self, vertex):
+        return [ vertex_tuple[0] for vertex_tuple in self._graph[vertex] ]
+    
+    def get_direct_neighbours(self, vertex):
+        return self.__get_neighbours(vertex)
+    
     def dfs(self, start, visited=None):
-        if self._graph[start]:
+        """ Computes a depth-first-search starting at the specified start.
+
+        Args:
+            start (_type_): _description_
+            visited (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            _type_: _description_
+        """
+        if start in self._graph:
             return [ x for x in self.__dfs(start, visited) if x is not start ]  
         return []
     
@@ -85,14 +108,5 @@ class Graph():
     # find_shortest_path
     # get all simple
     # find shortest with weight
-
-
-        
+    # minimiser pour delay, maximiser pour debit sur diskjtra ou prime
     
-        
-# class Node():
-#     def __init__(self, node_name):
-#         self._name = node_name
-        
-#     def get_name(self):
-#         return self._name
