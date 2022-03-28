@@ -1,3 +1,4 @@
+from asyncio import protocols
 import sys
 
 from engine import Engine
@@ -6,13 +7,12 @@ from network import Network
 class Simulator(Engine):
     def __init__(self, scenario: str, kwargs={}):
         super().__init__(kwargs)
-        self._network = Network(scenario)
-    
+        protocols = 1
+        self._networks = [ Network(scenario) ] * protocols
+
     def render(self, lax, rax):
-        #if lax:
-        self._network.render(lax)
-            
-        #TODO statistic avec rax
+        self._networks[0].render(lax)
+        #TODO statistic avec rax pour tous les networks
     
     def update(self, tick: int):
         """ Updates the simulation.
@@ -20,8 +20,8 @@ class Simulator(Engine):
         Args:
             tick (int): The current cycle of the simulation.
         """
-        self._network.update(tick, None)
-        #x = input()
+        for network in self._networks:
+            network.update(tick, None)
 
 
 

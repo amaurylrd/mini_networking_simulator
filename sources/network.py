@@ -1,5 +1,6 @@
 import networkx as nx
 import pandas as pd
+import numpy as np
 import numpy.random as random
 
 class Graph():
@@ -14,17 +15,17 @@ class Graph():
         
         nx.set_edge_attributes(self._graph, values=None, name='current_throughput') # sets for each edge None as the current throughput
         
-        self._emitters = set()
+        self._emitters = set() # the set of routes (src, dst) specified in the csv
         for column in df.iloc():
-            dst = column['destination']
-            src = column['source']
-            if dst == dst and src != dst and self._graph.has_node(dst):
+            src, dst = column['source'], column['destination']
+            if dst == dst and src != dst and self._graph.has_node(dst) and nx.shortest_path(self._graph, src, dst):
                 self._emitters.add((src, dst))
                 
     def render(self, pltax):
-        total_throughput = sum(weight for _, _, weight in self.get_weighted_edges()) // 10
+        total_throughput = sum(weight for _, _, weight in self.get_weighted_edges()) // 15
         weights = [ weight / total_throughput for _, _, weight in self.get_weighted_edges() ]
-        nx.draw_shell(self._graph, ax=pltax, width=weights, with_labels=True, node_size=550, font_size=15, font_weight='bold', font_color='whitesmoke')
+        nx.draw_shell(self._graph, ax=pltax, width=weights,
+            with_labels=True, node_color='#3503fc', node_size=575, font_size=15, font_weight='bold', font_color='whitesmoke')
         
     def get_weighted_edges(self):
         """ Returns all the edges of the graph formated like so (source, target, weight).
@@ -59,7 +60,7 @@ class Graph():
         return nx.generate_adjlist(self._graph)
     
 class Network(Graph):
-    class Node():
+    class _Node():
         def __init__(self, node_name):
             self.name = str(node_name)
             self.packages_in = [] # packages that have just been received
@@ -70,17 +71,25 @@ class Network(Graph):
                 return self.name == other.name
             return False
         
-        def update(self):
+        def update(self, tick: int):
             """ Moves the packages from 'packages_in' to 'packages_out' buffer.
+            
+            Args:
+                tick (int): The current tick in the simulation.
             """
-            self.packages_out.extend(self.packages_in)
+            for package in self.packages_in:
+                if package['to'] == self.name:
+                    elapsed = tick - package['sent']
+                    print(elapsed)
+                else:
+                    self.packages_out.append(package)
             self.packages_in = []
             
         def get_packages_from_out(self, n: int):
             """ Returns the packages to be sent. Those packages are removed from the buffer.
 
             Args:
-                destination (str): The number of packages to pop.
+                n (int): The number of packages to pop.
                 
             Returns:
                 out (list): The list of packages to send from this node.
@@ -120,70 +129,78 @@ class Network(Graph):
             return not self.packages_out
         
     def __init__(self, filename: str):
-        super().__init__("ressources/dataframes/" + filename + ".csv")
+        super().__init__('ressources/dataframes/' + filename + '.csv')
         
-        self._nodes = {}
+        self._nodes = {} # creates a list of node object to be used in the simulation
         for vertex in self.get_vertices():
-            self._nodes[vertex] = self.Node(vertex)
+            self._nodes[vertex] = self._Node(vertex)
             
-    def update(self, tick, congestion):  #TODO: coeff congestion pour sigma throughputs et sigma packages
+    def update(self, tick: int, congestion):  #TODO: coeff congestion pour sigma throughputs et sigma packages
         # current throughput is randomized around its average_throughput
         for (u, v, w) in self.get_weighted_edges():
             nx.set_edge_attributes(self._graph, {(u, v): { 'current_throughput': int(random.normal(w, 1.0)) }})
         
-        # moves the packages from 'reception' to 'ready_to_send' queue
-        for _, node in self._nodes.items():
-            node.update()
-        
         # generates n packages for each node source
-        for (source, destination) in self._emitters:
-            packages = [ p | { "from": source, "to": destination, "sent": tick } for p in self.generate_packages(100, 10, 2) ]
-            self._nodes[source].set_packages_out(packages)
+        for (u, v) in self._emitters:
+            packages = [ p | { 'from': u, 'to': v, 'sent': tick } for p in self.generate_packages(100, 10, 2) ]
+            self._nodes[u].set_packages_out(packages)
         
+        import statistics
         
-        # prend le meilleur débit entre voisins directs
-        # for (node_name, node) in self._nodes.items():
-        #     for destination in set([ package["to"] for package in node.packages_out ]):
-        #         nx.all_simple_paths(self._graph, node_name,)
+        def le_chemin_le_plus_court(src, dst):
+            return min(nx.all_simple_paths(self._graph, src, dst), key=len)
+            
+        def lsor(src, dst, forward=1):
+            paths = nx.all_simple_paths(self._graph, src, dst)
+            min, result = np.inf, None
+            
+            for path in paths:
+                avg = statistics.mean([ neigbour['current_throughput'] for neigbour in path[:forward] ])
+                if avg < min:
+                    min, result = avg, path
+                    
+            return result
         
-        # OLSR meilleur débit moyen 
-        #https://networkx.org/documentation/networkx-1.10/reference/generated/networkx.algorithms.simple_paths.all_simple_paths.html
-        #https://networkx.guide/algorithms/shortest-path/
+        def le_meilleur_debit_moyen(src, dst):
+            paths = nx.all_simple_paths(self._graph, src, dst)
+            max, result = 0.0, None
+            
+            for path in paths:
+                avg = statistics.mean([ neigbour['average_throughput'] for neigbour in path ])
+                if avg > max:
+                    max, result = avg, path
+                    
+            return result
         
-        # la plus petite latence
+        def le_meilleur_debit_median(src, dst):
+            paths = nx.all_simple_paths(self._graph, src, dst)
+            max, result = 0.0, None
+            
+            for path in paths:
+                avg = statistics.median([ neigbour['average_throughput'] for neigbour in path ])
+                if avg > max:
+                    max, result = avg, path
+                    
+            return result
+            
+        
         for (node_name, node) in self._nodes.items():
             nexts = {}
-                
-            for destination in set([ package["to"] for package in node.packages_out ]):
-                next = nx.shortest_path(self._graph, source=node_name, target=destination, weight='average_thourhput', method='dijkstra')[1]
-                nexts[destination] = next
+            for dst in set([ p['to'] for p in node.packages_out ]):
+                next = nx.shortest_path(self._graph, source=node_name, target=dst, weight='average_thourhput', method='dijkstra')[1]
+                nexts[dst] = next
             
-            debit_nexts = { next: self._graph[node_name][next]['current_throughput'] for next in set(nexts.values()) }
+            throughput_nexts = { next: self._graph[node_name][next]['current_throughput'] for next in set(nexts.values()) }
             
-            print("nexts et debits_nexts", nexts, debit_nexts)
-            
-            # while node.package_out:
-            #     package = node.packages_out[-1]
-                
-            #     if debit_nexts[nexts[package["to"]]] > 0:
-            #         package = node.packages_out.pop(0)
-            #         nexts[package["to"]].set_packages_in([package])
-            #         debit_nexts[nexts[package['to']]] -= 1
-            #     else:
-            #         break
-            
-            while node.packages_out and debit_nexts[nexts[node.packages_out[-1]['to']]] > 0:
+            while node.packages_out and throughput_nexts[nexts[node.packages_out[-1]['to']]] > 0:
                 package = node.packages_out.pop(0)
+                throughput_nexts[nexts[package['to']]] -= 1
                 self._nodes[nexts[package['to']]].set_packages_in([package])
-                debit_nexts[nexts[package['to']]] -= 1
-
-        for (node_name, node) in self._nodes.items():
-            print("node", node.name, node.packages_in, node.packages_out)
-            input()
-            
-        print("tick + 1")
         
-    
+        # moves the packages from 'reception' to 'ready_to_send' queue
+        for _, node in self._nodes.items():
+            node.update(tick + 1)
+                 
     def generate_packages(self, package_size: int, normal_loc=0.0, normal_scale=1.0):
         """ Generates randomized packages from the specified parameters.
 
