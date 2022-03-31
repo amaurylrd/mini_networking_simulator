@@ -23,7 +23,7 @@ class Engine(Launchable):
             self._maximum_tick = min(1, int(kwargs['maximum_tick']))
             
     def start(self):
-        plt.style.use('bmh')
+        #plt.style.use('bmh')
         
         self._fig, (left_ax, right_ax) = plt.subplots(1, 2)
         self._fig.tight_layout() # adjusts the padding between and around subplots
@@ -31,14 +31,22 @@ class Engine(Launchable):
         left_ax.set_axis_off() # turns the x- and y-axis off
         
         self._maximum_tick = 10 # TODO for debugging
+        tehreuihr = 10
         
-        tick = 0
-        while self._maximum_tick == 0 or tick < self._maximum_tick:
-            self.update(tick)
-            tick += 1
-
+        for load in range(10, 100, 10):
+            tick = 0
+            while self._maximum_tick == 0 or tick < self._maximum_tick:
+                self.update(tick, load)
+                tick += 1
+            
+            self.clear() # clears all the simulation
+            
         self.render(left_ax, right_ax)
-        
+    
+    @abstractmethod
+    def clear(slef):
+        pass
+      
     @abstractmethod
     def update(slef, tick: int):
         pass
@@ -47,7 +55,7 @@ class Engine(Launchable):
     def render(slef, left_ax, right_ax):
         pass
     
-    def stop(self):
-        self._fig.savefig('foo.png', bbox_inches='tight', transparent=True)
+    def stop(self): #TODO pour tous les networks
+        self._fig.savefig('foo.png', bbox_inches='tight') #transparent=True
         plt.close(self._fig)
         
