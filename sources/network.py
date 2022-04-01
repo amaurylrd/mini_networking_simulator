@@ -1,8 +1,8 @@
+import statistics
 import numpy as np
 import pandas as pd
 import cmasher as cmr
 import networkx as nx
-import statistics as stats
 import numpy.random as random
 
 from enum import IntEnum, unique
@@ -61,11 +61,12 @@ class Network(Graph):
     @unique
     class Protocol(IntEnum):
         OLSR = 0
-        AODV = 1
+        SHORTEST_PATH = 1
         LSOR = 2
         MAX_BOTTLENECK = 3
         FASTEST_BUFFER = 4
         EMPTIEST_BUFFER = 5
+        #hybride
         
     class _Node():
         def __init__(self, node_name):
@@ -78,47 +79,11 @@ class Network(Graph):
                 return self.name == other.name
             return False
         
-        # COMMENT S'EN SORTIR ?
-        #
-        # 1 passer self en argument de Node()
-        # 2 passer self en argument de update()
-        # 3 faire une troisième classe stylé
-        # 4 recommencer du debut, mais a l'envers
-        # 5 faire à manger
-        # 6 faire caca
-
-        def update(self, tick: int):
-            """ Moves the packages from 'packages_in' to 'packages_out' buffer.
-            
-            Args:
-                tick (int): The current tick in the simulation.
-            """
-            for package in self.packages_in:
-                if package['to'] == self.name:
-                    pass
-                    # statistics = Network.statistics[(package['from'], package['to'])]
-                    # statistics['total_tick'] += tick - package['sent']
-                    # statistics['package_arrived'] += 1
-                else:
-                    self.packages_out.append(package)
-            self.packages_in = []
-            
-        def get_packages_from_out(self, n: int):
-            """ Returns the packages to be sent. Those packages are removed from the buffer.
-
-            Args:
-                n (int): The number of packages to pop.
-                
-            Returns:
-                out (list): The list of packages to send from this node.
-            """
-            return [ self.packages_out.pop(0) for _ in range(min(len(self.packages_out), n)) ]
-        
         def set_packages_in(self, packages: list):
             """ Adds the specified packages at the end of the buffer.
 
             Args:
-                packages (list): The list of received packages.
+                packages (list): the list of received packages.
             """
             self.packages_in.extend(packages)
         
@@ -126,41 +91,25 @@ class Network(Graph):
             """ Sets the specified packages ready for send.
 
             Args:
-                packages (list): The list of new packages to send from this node.
+                packages (list): the list of new packages to send from this node.
             """
             self.packages_out.extend(packages)
-        
-        def get_buffer_size(self):
-            """ Returns the size of the buffer.
-
-            Returns:
-                out (int): The length of the buffer.
-            """
-            return len(self.packages_out)
-        
-        def is_buffer_empty(self):
-            """ Tells if the buffer is empty.
-
-            Returns:
-                out (bool): True if the buffer is empty, otherwise False.
-            """
-            return not self.packages_out
-        
-        def set_buffer_empty(self):
-            self.packages_out = []
-            self.packages_in = []
-            
+    
     def __init__(self, filename: str, protocol=0):
-        super().__init__('ressources/dataframes/' + filename + '.csv')
+        super().__init__(filename)
         
-        self._nodes = {} # creates a list of node object to be used in the simulation
+        # creates a list of node object to be used in the simulation
+        self._nodes = {}
         for vertex in self.get_vertices():
             self._nodes[vertex] = self._Node(vertex)
         
-        self.__setup(self.Protocol(protocol))
+        # setups the protocol routing algorithm
+        self.__setup(self.Protocol(protocol)) 
         
-        self.statistics = { e:{ 'package_arrived': 0, 'package_sent': 0, 'total_tick': 0 } for e in self._emitters }
-    
+        # creates objects to store the data for statistics
+        self.statistics_data = { e:{ 'package_arrived': 0, 'package_sent': 0, 'total_delay': 0 } for e in self._emitters }
+        self.statistics_plots = []
+        
     def get_nodes(self):
         """ Returns the list of nodes.
 
@@ -168,42 +117,43 @@ class Network(Graph):
             out (list): the list of nodes.
         """
         return self._nodes[:]
-
-    def render_stat(self):
-        #somme des delais moyens
-        res = 0
-        for stat in self.statistics: 
-            res += stat['total_tick'] / stat['package_arrived']
-        print("somme des delais moyens", res)
-
-        # pourcentage de paquets déservis pour le réseau caca prout forever young
-        res2 = 0
-        for stat in self.statistics:
-            res2 += stat['package_arrived'] / stat['package_sent']
-        res2 /= len(self.statistics)
-        print("pourcentage caca", res2)
-        
-        # pourcentage de paquets déservis pour le réseau trop bien
-        arrived = 0    
-        sent = 0
-        for stat in self.statistics:
-            arrived += stat['package_arrived']
-            sent += stat['package_arrived']
-        res3 = arrived / sent
-        print("pourcentage bien", res3)
-
-        return res
-
     
     def clear(self):
-        #ici
-        #self.stat.append(self.render_stat()) #TODO
+        plot_y = { 'average_delay': {}, 'pourcentage_destination': {} }
         
+        plot_y['average_delay']['sum_average'] = 0
+        for k, v in self.statistics_data.items():
+            delay = 0
+            if v['package_arrived'] > 0:
+                delay = v['total_delay'] / v['package_arrived']
+            plot_y['average_delay'][k] = delay
+            plot_y['average_delay']['sum_average'] += delay
+                
+        arrived, sent = 0, 0
+        plot_y['pourcentage_destination']['total'] = 0
+        for k, v in self.statistics_data.items():
+            arrived += v['package_arrived']
+            sent += v['package_sent']
+            plot_y['pourcentage_destination'][k] = 0
+            if v['package_arrived'] > 0:
+                plot_y['pourcentage_destination'][k] = v['package_sent'] / v['package_arrived'] * 100
+        if sent > 0:
+            plot_y['pourcentage_destination']['total'] = arrived / sent * 100
+
+        # refresh the data for the next simulation
+        for k in self.statistics_data:
+            self.statistics_data[k] = dict.fromkeys(self.statistics_data[k], 0)
+
+        # store the data for the rendering
+        self.statistics_plots.append(plot_y)
+        
+        # clear the data of the nodes
         for node in self._nodes.values():
-            node.set_buffer_empty()
+            node.packages_out = []
+            node.packages_in = []
             
     def render(self, pltax):
-        pos = nx.kamada_kawai_layout(self._graph)
+        pos = nx.kamada_kawai_layout(self._graph) # alternatively, pos = nx.spectral_layout(self._graph)
         labels = nx.get_edge_attributes(self._graph, 'average_throughput')
         
         edges = self.get_edges()
@@ -221,19 +171,22 @@ class Network(Graph):
         nx.draw(self._graph, pos, ax=pltax, with_labels=True, width=1.5, edge_color=colors, edge_cmap=cm,
             node_color='#504e52', node_size=300, font_size=14, font_weight='bold', font_color='whitesmoke')
         
-        nx.draw_networkx_edge_labels(self._graph, pos, ax=pltax, edge_labels=labels, font_size=10)        
-    
+        nx.draw_networkx_edge_labels(self._graph, pos, ax=pltax, edge_labels=labels, font_size=10)
+        
+        return cm
+       
     def update(self, tick: int, load: int):
         # current throughput is randomized around its average_throughput
         for (u, v, w) in self.get_weighted_edges():
-            nx.set_edge_attributes(self._graph, {(u, v): { 'current_throughput': int(random.normal(w, 1.0)) }})
+            nx.set_edge_attributes(self._graph, {(u, v): { 'current_throughput': max(0, int(random.normal(w, np.sqrt(w)))) }})
         
         # generates n packages for each node source
         for (u, v) in self._emitters:
-            packages = [ p | { 'from': u, 'to': v, 'sent': tick } for p in self.generate_packages(100, load, 2) ]
+            packages = [ p | { 'from': u, 'to': v, 'sent': tick } for p in self.generate_packages(100, load) ]
             self._nodes[u].set_packages_out(packages)
-            self.statistics[(u, v)]['package_sent'] += len(packages)
+            self.statistics_data[(u, v)]['package_sent'] += len(packages)
         
+        # moves the packages according to the path given by the routing algorithm
         for (node_name, node) in self._nodes.items():
             nexts = {}
             for (src, dst) in set([ (p['from'], p['to']) for p in node.packages_out ]):
@@ -246,24 +199,28 @@ class Network(Graph):
                 throughput_nexts[nexts[(package['from'], package['to'])]] -= 1
                 self._nodes[nexts[(package['from'], package['to'])]].set_packages_in([package])
         
-        # moves the packages from 'reception' to 'ready_to_send' queue
+        # moves the packages from 'reception' to 'ready_to_send' queue and retrieves the data from packages arrived before deletion
         for node in self._nodes.values():
-            node.update(tick + 1)
+            for package in node.packages_in:
+                if package['to'] == node.name:
+                    stats = self.statistics_data[(package['from'], package['to'])]
+                    stats['total_delay'] += tick - package['sent'] + 1
+                    stats['package_arrived'] += 1
+                else:
+                    node.packages_out.append(package)
+            node.packages_in = []
                  
-    def generate_packages(self, package_size: int, normal_loc=0.0, normal_scale=1.0):
+    def generate_packages(self, package_size: int, package_sample: int):
         """ Generates randomized packages from the specified parameters.
 
         Args:
             package_size (int): the specified fixed size (in bits) for all packages. Must be non-negative.
-            package_loc (float, optional): the mean of the gaussian distribution. Must be non-negative. Defaults to 0.0.
-            package_spread (float, optional): the standard deviation of the gaussian distribution. Defaults to 1.0.
-
+            package_sample (int): the average number of packages to be generated in [0, 2*package_sample]. Must be non-negative.
         Returns:
             out (ndarray): samples of packages from the parameterized generation.
         """
         packages = []
-        normal_distribution = random.normal(normal_loc, normal_scale)
-        samples = int(normal_distribution)
+        samples = random.randint(0, package_sample + package_sample + 1)
         
         for _ in range(samples):
             package = { "data": random.randint(0, 2, size=(package_size)) } # generate an n-dimensional array of random bits
@@ -274,8 +231,8 @@ class Network(Graph):
     def __olsr(self, src, dst):
             max, result = 0.0, None
             
-            for path in nx.all_simple_paths(self._graph, src, dst):
-                avg = stats.fmean([ self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) ])
+            for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+                avg = np.mean([ self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) ])
                 if avg > max:
                     max = avg
                     result = path
@@ -285,22 +242,21 @@ class Network(Graph):
     def __lsor(self, src, dst, forward_range=1):
             max, result = 0.0, None
             
-            for path in nx.all_simple_paths(self._graph, src, dst):
-                avg = stats.fmean([ self._graph[path[n]][path[n + 1]]['current_throughput'] for n in range(len(path[:forward_range])) ])
+            for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+                avg = np.mean([ self._graph[path[n]][path[n + 1]]['current_throughput'] for n in range(len(path[:forward_range + 1]) - 1) ])
                 if avg > max:
                     max = avg
                     result = path
                     
             return result
         
-    def __aodv(self, src, dst):
+    def __shortest_path(self, src, dst):
         return min(nx.all_simple_paths(self._graph, src, dst), key=len)
     
     def __path_max_bottleneck(self, src, dst):
-        paths = nx.all_simple_paths(self._graph, src, dst)
         max, result = 0.0, None
 
-        for path in paths:
+        for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
             bottle_neck = min( self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) )
             if bottle_neck > max:
                 max = bottle_neck 
@@ -311,8 +267,8 @@ class Network(Graph):
     def __path_min_buffer(self, src, dst):
             min, result = np.inf, None
             
-            for path in nx.all_simple_paths(self._graph, src, dst):
-                size = self._nodes[path[1]].get_buffer_size()
+            for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+                size = len(self._nodes[path[1]].packages_out)
                 if size < min:
                     if size == 0:
                         return path
@@ -324,9 +280,9 @@ class Network(Graph):
     def __path_fastest_buffer(self, src, dst):
         result, max = None, -1
         
-        for path in nx.all_simple_paths(self._graph, src, dst):
+        for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
             node = self._nodes[path[1]]
-            if node.is_buffer_empty():
+            if not node.packages_out:
                 return path
             else:
                 tick = node.packages_out[0]['sent']
@@ -340,14 +296,14 @@ class Network(Graph):
         self.protocol = protocol
         func = {
             self.Protocol.OLSR: self.__olsr,
-            self.Protocol.AODV: self.__aodv,
+            self.Protocol.SHORTEST_PATH: self.__shortest_path,
             self.Protocol.MAX_BOTTLENECK: self.__path_max_bottleneck
         }
         
         self._paths = {}
         if protocol in func:
             self._paths = { (u, v) : func[protocol](u, v) for (u, v) in self._emitters }
-            print(self.protocol.name + " : " + str(self._paths))
+            # for debug purpose print(self.protocol.name + " : " + str(self._paths))
             
     def __process_next(self, src, dst, node_name):
         func = {
@@ -356,11 +312,11 @@ class Network(Graph):
             self.Protocol.EMPTIEST_BUFFER: self.__path_min_buffer
         }
         
+        paths = dict(self._paths)
         if self.protocol in func:
-            self._paths[(src, dst)] = func[self.protocol](node_name, dst)
-        
-        path = self._paths[(src, dst)]
-        return path[path.index(node_name) + 1]
+            paths[(src, dst)] = func[self.protocol](node_name, dst)
+            
+        return paths[(src, dst)][paths[(src, dst)].index(node_name) + 1]
     
     # def le_meilleur_debit_median(src, dst):
         #     paths = nx.all_simple_paths(self._graph, src, dst)
@@ -373,3 +329,6 @@ class Network(Graph):
         #             result = path
                     
         #     return result
+        
+        #debit moyen
+        #plus de voisins

@@ -1,7 +1,7 @@
-from abc import ABC, abstractmethod
-
 import matplotlib.pyplot as plt
-import math, time
+
+from abc import ABC, abstractmethod
+from sys import stdout
 
 class Launchable(ABC):
     def launch(self):
@@ -19,29 +19,36 @@ class Launchable(ABC):
 class Engine(Launchable):
     def __init__(self, kwargs={}):
         self._maximum_tick = 0
-        if 'maximum_tick' in kwargs:
-            self._maximum_tick = min(1, int(kwargs['maximum_tick']))
-            
+        if 'time' in kwargs:
+            self._maximum_tick = max(1, int(kwargs['time']))
+
     def start(self):
-        #plt.style.use('bmh')
+        plt.style.use('bmh')
         
-        self._fig, (left_ax, right_ax) = plt.subplots(1, 2)
-        self._fig.tight_layout() # adjusts the padding between and around subplots
-        right_ax.set_title("Délai moyen en fonction de la charge dans un un réseau 5G", fontsize=18)
-        left_ax.set_axis_off() # turns the x- and y-axis off
+        self._fig, _ = plt.subplots(2, 2, layout='tight', figsize=(9, 7))
+        self._load = { 'start': 10, 'stop': 100, 'step': 5 }
         
-        self._maximum_tick = 10 # TODO for debugging
-        tehreuihr = 10
-        
-        for load in range(10, 100, 10):
+        for load in range(self._load['start'], self._load['stop'], self._load['step']):
             tick = 0
             while self._maximum_tick == 0 or tick < self._maximum_tick:
-                self.update(tick, load)
+                self.update(tick, load) # updates the simulation
                 tick += 1
             
-            self.clear() # clears all the simulation
+            # clears all in the simulation
+            self.clear()
             
-        self.render(left_ax, right_ax)
+            # prints the progress bar up to 95%
+            progress = load / self._load['stop']
+            stdout.write("\rProgress: [{0:50s}] {1:.1f}% Complete".format('#' * int(progress * 50), progress * 100))
+            #stdout.flush()
+        
+        # renders the simulation and statistics
+        self.render()
+        plt.subplot_tool()
+
+        # prints the progress bar at 100%
+        stdout.write("\rProgress: [{0:50s}] 100.0% Complete".format('#' * int(50)))
+        stdout.flush()
     
     @abstractmethod
     def clear(slef):
@@ -52,10 +59,9 @@ class Engine(Launchable):
         pass
     
     @abstractmethod
-    def render(slef, left_ax, right_ax):
+    def render(slef):
         pass
     
-    def stop(self): #TODO pour tous les networks
-        self._fig.savefig('foo.png', bbox_inches='tight') #transparent=True
+    def stop(self):
         plt.close(self._fig)
         
