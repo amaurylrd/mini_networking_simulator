@@ -26,7 +26,7 @@ Les différentes métriques et protocoles implémentés sont :
 | 1  | SHORTEST_PATH           | le plus court chemin        |
 | 2  | LSOR                    | le meilleur débit moyen (en fonction des conditions radio) |
 | 3  | MAX_BOTTLENECK          | le plus grand goulot d'étranglement |
-| 4  | FASTEST_BUFFER          | le buffer le plus rapide    |
+| 4  | FASTEST_BUFFER          | le buffer le plus rapide (dont le premier paquet est le plus récent)   |
 | 5  | EMPTIEST_BUFFER         | le buffer le moins rempli   |
 | 6  | HYDRBID | la moyenne des élections avec SHORTEST_PATH, LSOR, MAX_BOTTLENECK, FASTEST_BUFFER |
 
