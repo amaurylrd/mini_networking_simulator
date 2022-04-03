@@ -67,7 +67,7 @@ class Network(Graph):
         MAX_BOTTLENECK = 3
         FASTEST_BUFFER = 4
         EMPTIEST_BUFFER = 5
-        #hybride
+        HYDRBID_LSOR_BOTTLENECK = 6
         
     class _Node():
         def __init__(self, node_name):
@@ -246,10 +246,12 @@ class Network(Graph):
 
             return result
     
-    def __lsor(self, src, dst, forward_range=1):
+    def __lsor(self, src, dst, forward_range=1, paths=None):
             max, result = 0.0, None
             
-            for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+            if paths is None:
+                paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+            for path in paths:
                 avg = np.mean([ self._graph[path[n]][path[n + 1]]['current_throughput'] for n in range(len(path[:forward_range + 1]) - 1) ])
                 if avg > max:
                     max = avg
@@ -260,10 +262,12 @@ class Network(Graph):
     def __shortest_path(self, src, dst):
         return min(nx.all_simple_paths(self._graph, src, dst), key=len)
     
-    def __path_max_bottleneck(self, src, dst):
+    def __path_max_bottleneck(self, src, dst, paths=None):
         max, result = 0.0, None
 
-        for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+        if paths is None:
+            paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+        for path in paths:
             bottle_neck = min( self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) )
             if bottle_neck > max:
                 max = bottle_neck 
@@ -299,36 +303,23 @@ class Network(Graph):
 
         return result
     
-    # def __hybride_solution(self, src, dst):
-    #     paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
-    #     ranks = [0] * len(paths)
+    def __hybrid_solution(self, src, dst):
+        paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+        ranks = [ i for i in range(len(paths)) ] # for the shortest path
         
-    #     l1 = paths[:]
-    #     l2 = paths[:]
-    #     for i in range(len(ranks)):
-    #         p1 = self.__lsor(src, dst)
-    #         p2 = self.__path_max_bottleneck(src, dst)
+        list = paths[:]
+        for i in range(len(ranks)):
+            path = self.__lsor(src, dst, 2, list)
+            ranks[paths.index(path)] += i
+            list.remove(path)
+        
+        list = paths[:]
+        for i in range(len(ranks)):
+            path = self.__path_max_bottleneck(src, dst, list)
+            ranks[paths.index(path)] += i
+            list.remove(path)
             
-    #         if p1 == p2:
-    #             return p1
-            
-    #         ranks[l1.index(p1)] += i
-    #         l1.remove(p1)
-            
-    #         ranks[l2.index(p2)] += i
-    #         l2.remove(p2)
-            
-            
-    #     max, result = 0.0, None
-
-    #     for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
-    #         bottle_neck = min( self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) )
-    #         if bottle_neck > max:
-    #             max = bottle_neck 
-    #             result = path
-                
-    #     return result
-    
+        return paths[ranks.index(min(ranks))]
         
     def __setup(self, protocol):
         self.protocol = protocol
@@ -347,7 +338,8 @@ class Network(Graph):
         func = {
             self.Protocol.LSOR: self.__lsor,
             self.Protocol.FASTEST_BUFFER: self.__path_fastest_buffer,
-            self.Protocol.EMPTIEST_BUFFER: self.__path_min_buffer
+            self.Protocol.EMPTIEST_BUFFER: self.__path_min_buffer,
+            self.Protocol.HYDRBID_LSOR_BOTTLENECK: self.__hybrid_solution
         }
         
         paths = dict(self._paths)
@@ -356,6 +348,3 @@ class Network(Graph):
             
         return paths[(src, dst)][paths[(src, dst)].index(node_name) + 1]
     
-        #TODO idée
-        #debit median
-        #plus de voisins
