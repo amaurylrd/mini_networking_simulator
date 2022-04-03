@@ -27,7 +27,7 @@ Les différentes métriques et protocoles implémentés sont :
 | 3  | MAX_BOTTLENECK          | le plus grand goulot d'étranglement        |
 | 4  | FASTEST_BUFFER          | le buffer le plus rapide    |
 | 5  | EMPTIEST_BUFFER         | le buffer le moins rempli   |
-| 6  | HYDRBID | la moyenne des protocoles SHORTEST_PATH, LSOR, MAX_BOTTLENECK, FASTEST_BUFFER |
+| 6  | HYDRBID | la moyenne des élections avec SHORTEST_PATH, LSOR, MAX_BOTTLENECK, FASTEST_BUFFER |
 
 
 ### Modélisation
