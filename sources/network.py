@@ -288,10 +288,12 @@ class Network(Graph):
                      
             return result
         
-    def __path_fastest_buffer(self, src, dst):
+    def __path_fastest_buffer(self, src, dst, paths=None):
         result, max = None, -1
         
-        for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+        if paths is None:
+            paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+        for path in paths:
             node = self._nodes[path[1]]
             if not node.packages_out:
                 return path
@@ -304,38 +306,39 @@ class Network(Graph):
         return result
     
     def __hybrid_solution(self, src, dst):
+        funcs = {
+            lambda src, dst, paths: self.__lsor(src, dst, 2, paths),
+            self.__path_max_bottleneck,
+            self.__path_fastest_buffer
+        }
+        
         paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
         ranks = [ i for i in range(len(paths)) ] # for the shortest path
         
-        list = paths[:]
-        for i in range(len(ranks)):
-            path = self.__lsor(src, dst, 2, list)
-            ranks[paths.index(path)] += i
-            list.remove(path)
-        
-        list = paths[:]
-        for i in range(len(ranks)):
-            path = self.__path_max_bottleneck(src, dst, list)
-            ranks[paths.index(path)] += i
-            list.remove(path)
+        for func in funcs:
+            list = paths[:]
+            for i in range(len(ranks)):
+                path = func(src, dst, list)
+                ranks[paths.index(path)] += i
+                list.remove(path)
             
         return paths[ranks.index(min(ranks))]
         
     def __setup(self, protocol):
         self.protocol = protocol
-        func = {
+        funcs = {
             self.Protocol.OLSR: self.__olsr,
             self.Protocol.SHORTEST_PATH: self.__shortest_path,
             self.Protocol.MAX_BOTTLENECK: self.__path_max_bottleneck
         }
         
         self._paths = {}
-        if protocol in func:
-            self._paths = { (u, v) : func[protocol](u, v) for (u, v) in self._emitters }
+        if protocol in funcs:
+            self._paths = { (u, v) : funcs[protocol](u, v) for (u, v) in self._emitters }
             # for debug purpose print(self.protocol.name + " : " + str(self._paths))
             
     def __process_next(self, src, dst, node_name):
-        func = {
+        funcs = {
             self.Protocol.LSOR: self.__lsor,
             self.Protocol.FASTEST_BUFFER: self.__path_fastest_buffer,
             self.Protocol.EMPTIEST_BUFFER: self.__path_min_buffer,
@@ -343,8 +346,8 @@ class Network(Graph):
         }
         
         paths = dict(self._paths)
-        if self.protocol in func:
-            paths[(src, dst)] = func[self.protocol](node_name, dst)
+        if self.protocol in funcs:
+            paths[(src, dst)] = funcs[self.protocol](node_name, dst)
             
         return paths[(src, dst)][paths[(src, dst)].index(node_name) + 1]
     
