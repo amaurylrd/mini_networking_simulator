@@ -1,4 +1,5 @@
-# Simulation et Analyse des métriques dans un réseau 5G
+# Simulation et Analyse des métriques dans un réseau sans 
+
 
 
 ## Présentation du sujet d'étude
@@ -20,13 +21,13 @@ Les différentes métriques et protocoles implémentés sont :
 
 | N° | Nom du protocol         | Description de l'algorithme |
 | :- |:-----------------------:| ---------------------------:|
-| 0  | *OLSR*                    | le meilleur débit moyen     |
-| 1  | *SHORTEST_PATH*           | le plus court chemin        |
-| 2  | *LSOR*                    | le meilleur débit moyen (conditions radio) |
-| 3  | *MAX_BOTTLENECK*          | le plus grand goulot d'étranglement        |
-| 4  | *FASTEST_BUFFER*         | le buffer le plus rapide    |
-| 5  | *EMPTIEST_BUFFER*         | le buffer le moins rempli   |
-| 6  | *HYDRBID* | la moyenne des protocoles *SHORTEST_PATH*, *LSOR*, *MAX_BOTTLENECK*, *FASTEST_BUFFER* |
+| 0  | OLSR                    | le meilleur débit moyen     |
+| 1  | SHORTEST_PATH           | le plus court chemin        |
+| 2  | LSOR                    | le meilleur débit moyen (conditions radio) |
+| 3  | MAX_BOTTLENECK          | le plus grand goulot d'étranglement        |
+| 4  | FASTEST_BUFFER          | le buffer le plus rapide    |
+| 5  | EMPTIEST_BUFFER         | le buffer le moins rempli   |
+| 6  | HYDRBID | la moyenne des protocoles SHORTEST_PATH, LSOR, MAX_BOTTLENECK, FASTEST_BUFFER |
 
 
 Modélisation
