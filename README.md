@@ -11,7 +11,7 @@ Comparer des solutions de routages capables de trouver (et choisir) le meilleur 
 
 ### Consigne
 
-Examiner leurs performance sur différentes scénarii et conlure.
+Examiner leurs performance sur différentes scénarii et conlure. <br>
 Poursuivre en élaborant une solution combinant les différents avantages de chacune des solutions testées.
 
 
