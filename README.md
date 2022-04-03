@@ -20,7 +20,7 @@ Les différentes métriques et protocoles implémentés sont :
 
 
 | N° | Nom du protocol         | Description de l'algorithme |
-| :- |:-----------------------:| ---------------------------:|
+| :- |:----------------------: | :-------------------------- |
 | 0  | OLSR                    | le meilleur débit moyen     |
 | 1  | SHORTEST_PATH           | le plus court chemin        |
 | 2  | LSOR                    | le meilleur débit moyen (conditions radio) |
