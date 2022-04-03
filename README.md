@@ -14,7 +14,7 @@ Comparer des solutions de routages capables de trouver (et choisir) le meilleur 
 Examiner leurs performance sur différentes scénarii et conlure. Poursuivre en élaborant une solution combinant les différents avantages de chacune des solutions testées.
 
 
-# azeza
+### Protcoles
 
 Les différentes métriques et protocoles implémentés sont : 
 
@@ -30,9 +30,16 @@ Les différentes métriques et protocoles implémentés sont :
 | 6  | HYDRBID | la moyenne des protocoles SHORTEST_PATH, LSOR, MAX_BOTTLENECK, FASTEST_BUFFER |
 
 
-Modélisation
+### Modélisation
 
 Simplifications
 
 Nous considérons que tous les paquets sont de même taille pour faciliter les statistiques (afin de ne pas avoir à  faire de moyenne pondérée).
 De même, les paquets sont rangés dans des files FIFO de capacité infinie.
+
+
+## Résultats
+
+## Analyse
+
+## Conclusion
