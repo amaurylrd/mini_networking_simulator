@@ -1,0 +1,9 @@
+source,target,average_throughput,destination
+a,b,50,f
+a,c,75
+a,d,25
+b,d,50,f
+d,f,50
+d,c,150
+c,e,75
+e,f,25

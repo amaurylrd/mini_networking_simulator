@@ -25,7 +25,6 @@ class Engine(Launchable):
     def start(self):
         plt.style.use('bmh')
         
-        self._fig, _ = plt.subplots(2, 2, layout='tight', figsize=(9, 7))
         self._load = { 'start': 10, 'stop': 100, 'step': 5 }
         
         for load in range(self._load['start'], self._load['stop'], self._load['step']):
@@ -40,11 +39,10 @@ class Engine(Launchable):
             # prints the progress bar up to 95%
             progress = load / self._load['stop']
             stdout.write("\rProgress: [{0:50s}] {1:.1f}% Complete".format('#' * int(progress * 50), progress * 100))
-            #stdout.flush()
+            stdout.flush()
         
         # renders the simulation and statistics
         self.render()
-        plt.subplot_tool()
 
         # prints the progress bar at 100%
         stdout.write("\rProgress: [{0:50s}] 100.0% Complete".format('#' * int(50)))
@@ -63,5 +61,5 @@ class Engine(Launchable):
         pass
     
     def stop(self):
-        plt.close(self._fig)
+        plt.close('all')
         

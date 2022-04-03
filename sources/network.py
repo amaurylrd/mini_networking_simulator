@@ -1,4 +1,3 @@
-import statistics
 import numpy as np
 import pandas as pd
 import cmasher as cmr
@@ -6,6 +5,8 @@ import networkx as nx
 import numpy.random as random
 
 from enum import IntEnum, unique
+
+from sklearn.metrics import average_precision_score
 
 class Graph():
     def __init__(self, filepath: str):
@@ -107,7 +108,7 @@ class Network(Graph):
         self.__setup(self.Protocol(protocol)) 
         
         # creates objects to store the data for statistics
-        self.statistics_data = { e:{ 'package_arrived': 0, 'package_sent': 0, 'total_delay': 0 } for e in self._emitters }
+        self._statistics_tmp = { e:{ 'package_arrived': 0, 'package_sent': 0, 'total_delay': 0 } for e in self._emitters }
         self.statistics_plots = []
         
     def get_nodes(self):
@@ -119,30 +120,36 @@ class Network(Graph):
         return self._nodes[:]
     
     def clear(self):
-        plot_y = { 'average_delay': {}, 'pourcentage_destination': {} }
+        # retrives the data from the simulation to be cleared
+        plot_y = { 'average_delay': {}, 'pourcentage_destination': {}, 'buffer_occupation': {} }
         
+        # 1. average delay
         plot_y['average_delay']['sum_average'] = 0
-        for k, v in self.statistics_data.items():
+        for k, v in self._statistics_tmp.items():
             delay = 0
             if v['package_arrived'] > 0:
                 delay = v['total_delay'] / v['package_arrived']
             plot_y['average_delay'][k] = delay
             plot_y['average_delay']['sum_average'] += delay
-                
+        
+        # 2. pourcentage of packages sent to the destination
         arrived, sent = 0, 0
-        plot_y['pourcentage_destination']['total'] = 0
-        for k, v in self.statistics_data.items():
+        plot_y['pourcentage_destination']['pourcentage_total'] = 0
+        for k, v in self._statistics_tmp.items():
             arrived += v['package_arrived']
             sent += v['package_sent']
             plot_y['pourcentage_destination'][k] = 0
-            if v['package_arrived'] > 0:
-                plot_y['pourcentage_destination'][k] = v['package_sent'] / v['package_arrived'] * 100
+            if v['package_sent'] > 0:
+                plot_y['pourcentage_destination'][k] = v['package_arrived'] / v['package_sent'] * 100
         if sent > 0:
-            plot_y['pourcentage_destination']['total'] = arrived / sent * 100
+            plot_y['pourcentage_destination']['pourcentage_total'] = arrived / sent * 100
+
+        # 3. average buffer occupation
+        plot_y['buffer_occupation']['average_occupation'] = np.mean([ len(node.packages_out) for node in self._nodes.values() ])
 
         # refresh the data for the next simulation
-        for k in self.statistics_data:
-            self.statistics_data[k] = dict.fromkeys(self.statistics_data[k], 0)
+        for k in self._statistics_tmp:
+            self._statistics_tmp[k] = dict.fromkeys(self._statistics_tmp[k], 0)
 
         # store the data for the rendering
         self.statistics_plots.append(plot_y)
@@ -184,15 +191,15 @@ class Network(Graph):
         for (u, v) in self._emitters:
             packages = [ p | { 'from': u, 'to': v, 'sent': tick } for p in self.generate_packages(100, load) ]
             self._nodes[u].set_packages_out(packages)
-            self.statistics_data[(u, v)]['package_sent'] += len(packages)
+            self._statistics_tmp[(u, v)]['package_sent'] += len(packages)
         
         # moves the packages according to the path given by the routing algorithm
-        for (node_name, node) in self._nodes.items():
+        for name, node in self._nodes.items():
             nexts = {}
             for (src, dst) in set([ (p['from'], p['to']) for p in node.packages_out ]):
-                nexts[(src, dst)] = self.__process_next(src, dst, node_name)
+                nexts[(src, dst)] = self.__process_next(src, dst, name)
             
-            throughput_nexts = { next: self._graph[node_name][next]['current_throughput'] for next in set(nexts.values()) }
+            throughput_nexts = { next: self._graph[name][next]['current_throughput'] for next in set(nexts.values()) }
             
             while node.packages_out and throughput_nexts[nexts[(node.packages_out[-1]['from'], node.packages_out[-1]['to'])]] > 0:
                 package = node.packages_out.pop(0)
@@ -200,16 +207,16 @@ class Network(Graph):
                 self._nodes[nexts[(package['from'], package['to'])]].set_packages_in([package])
         
         # moves the packages from 'reception' to 'ready_to_send' queue and retrieves the data from packages arrived before deletion
-        for node in self._nodes.values():
+        for name, node in self._nodes.items():
             for package in node.packages_in:
-                if package['to'] == node.name:
-                    stats = self.statistics_data[(package['from'], package['to'])]
+                if package['to'] == name:
+                    stats = self._statistics_tmp[(package['from'], package['to'])]
                     stats['total_delay'] += tick - package['sent'] + 1
                     stats['package_arrived'] += 1
                 else:
                     node.packages_out.append(package)
             node.packages_in = []
-                 
+            
     def generate_packages(self, package_size: int, package_sample: int):
         """ Generates randomized packages from the specified parameters.
 
@@ -292,6 +299,37 @@ class Network(Graph):
 
         return result
     
+    # def __hybride_solution(self, src, dst):
+    #     paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+    #     ranks = [0] * len(paths)
+        
+    #     l1 = paths[:]
+    #     l2 = paths[:]
+    #     for i in range(len(ranks)):
+    #         p1 = self.__lsor(src, dst)
+    #         p2 = self.__path_max_bottleneck(src, dst)
+            
+    #         if p1 == p2:
+    #             return p1
+            
+    #         ranks[l1.index(p1)] += i
+    #         l1.remove(p1)
+            
+    #         ranks[l2.index(p2)] += i
+    #         l2.remove(p2)
+            
+            
+    #     max, result = 0.0, None
+
+    #     for path in sorted(nx.all_simple_paths(self._graph, src, dst), key=len):
+    #         bottle_neck = min( self._graph[path[n]][path[n + 1]]['average_throughput'] for n in range(len(path) - 1) )
+    #         if bottle_neck > max:
+    #             max = bottle_neck 
+    #             result = path
+                
+    #     return result
+    
+        
     def __setup(self, protocol):
         self.protocol = protocol
         func = {
@@ -318,17 +356,6 @@ class Network(Graph):
             
         return paths[(src, dst)][paths[(src, dst)].index(node_name) + 1]
     
-    # def le_meilleur_debit_median(src, dst):
-        #     paths = nx.all_simple_paths(self._graph, src, dst)
-        #     max, result = 0.0, None
-            
-        #     for path in paths:
-        #         med = statistics.median([ neigbour['average_throughput'] for neigbour in path ])
-        #         if med > max:
-        #             max = med 
-        #             result = path
-                    
-        #     return result
-        
-        #debit moyen
+        #TODO idée
+        #debit median
         #plus de voisins
