@@ -78,7 +78,7 @@ in_format = lambda x: 'ressources/dataframes/{}.csv'.format(x)
 
 def main(argc, argv, kwargs):
     if argc < 2:
-        print("Usage: <scenario> <options*>")
+        print(f"Usage: python {argv[0]} <scenario> <options*>")
         return 1
     
     engine = Simulator(argv[1], kwargs)
