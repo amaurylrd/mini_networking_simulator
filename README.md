@@ -80,6 +80,12 @@ Les différentes métriques et protocoles implémentés sont :
 
 ## Résultats
 
+Les résultats sont présentés sur des images découpées en quatre parties :
+1. (en haut à gauche) la topologie du réseau avec quand le protocole le permet les routes décidées à l'initialisation ;
+2. (en haut à droite) un graphique qui montre le délai moyen par utilisateur ;
+3. (en bas à gauche) un graphique qui montre le pourcentage de paquets à destination par utilisateur ;
+4. (en bas à droite) un graphique qui montre la moyenne de paquets dans les buffers.
+ 
 ![Drag Racing](./ressources/results/scenario_test2_FASTEST_BUFFER.png)
 
 ## Analyse
