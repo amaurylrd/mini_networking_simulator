@@ -20,7 +20,7 @@ La méthode main est contenue dans le fichier [sources/main.py](./sources/main.p
 
 *scenario*: Le nom du fichier csv (sans extension). Le graph est construit à partir des données de la topolgie fournies via cet argument. Le fichier doit être dans le repertoire ressources/dataframes/.
 
-*options*: Pour le moment seul l'option *time* est impactante qui indique la durée des simulations. (Si pas renseignée, la boucle tourne à l'infini).
+*options*: Pour le moment, seule l'option *time* est impactante qui indique la durée des simulations. (Si pas renseignée, la boucle tourne à l'infini).
 
 exemple: `python sources/main.py scenario_test2 time=500`
 
