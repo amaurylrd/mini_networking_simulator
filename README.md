@@ -26,7 +26,7 @@ exemple: `python sources/main.py scenario_test2 time=500`
 
 ### Architecture
 
-Ci-dessous, la liste pour une meilleure compréhension de l'architecture du projet.
+Ci-dessous, la décomposition en liste des dossiers pour une meilleure compréhension de l'architecture du projet.
 
 1. sources/ : encapsule les fichiers de code ;
 2. ressources/dataframes : répertorie toutes les topologies pour les différentes simulations ;
