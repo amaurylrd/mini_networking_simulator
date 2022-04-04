@@ -39,12 +39,13 @@ Ci-dessous, la décomposition en liste des dossiers pour une meilleure compréhe
 ### Objectif de la simulation
 
 Comparer des solutions de routages capables de trouver (et choisir) le meilleur des chemins dans un système simple mais considérant des métriques différentes (parmis lesquels meilleur débit moyen, plus faible encombrement, plus court chemin, etc).
-<br><br>
 
 ### Consigne
 
 - Examiner leurs performance sur différentes scénarii et conlure.
 - Poursuivre en élaborant une solution combinant les différents avantages de chacune des solutions testées.
+
+<br>
 
 ### Modélisation
 
