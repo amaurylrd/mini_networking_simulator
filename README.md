@@ -85,9 +85,11 @@ Les résultats sont présentés sur des images découpées en quatre parties :
 2. (en haut à droite) un graphique qui montre le délai moyen par utilisateur (la ligne bleue représente la limite de satisfaction) ;
 3. (en bas à gauche) un graphique qui montre le pourcentage de paquets à destination par utilisateur ;
 4. (en bas à droite) un graphique qui montre la moyenne de paquets dans les buffers.
- 
+
 ![Drag Racing](./ressources/results/test3_FASTEST_BUFFER.png)
 
 ## Analyse
+
+Toutes les simulations ci-dessuos, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
 
 ## Conclusion
