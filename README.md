@@ -1,5 +1,33 @@
 # Simulation et Analyse des métriques dans un réseau sans 
 
+## Note developpeur
+
+### Intégration
+
+Version de python utilisé : `Python 3.10.2`
+
+Ci-dessous, la liste des majeures librairies utilisées :
+1. [numpy](https://numpy.org/) pour la génération de nombre pseudo-aléatoire ;
+2. [pandas](https://pandas.pydata.org/) pour la lecture des scénarii au format csv ;
+3. [network](https://networkx.org/) pour la manpilation de graph ;
+4. [matplotlib.pyplot](https://matplotlib.org/) pour la visualisation des données sous formes de graphiques.
+
+
+### Démarrage
+
+La méthode main est contenue dans le fichier sources/main.py todo lien. C'est le fichier d'entrée pour lancer l'applicaton : `Usage: python sources/main.py <scenario> <options*>`.
+
+
+*scenario*: Le nom du fichier csv (sans extension). Le graph est construit à partir des données de la topolgie fournies via cet argument.
+
+*options*: Pour le moment seul l'option *time* est impactante qui indique la durée des simulations. (Si pas renseignée, la boucle tourne à l'infini).
+
+exemple: `python sources/main.py scenario_test2 time=500`
+
+directories
+
+-----------------
+
 ## Présentation du sujet d'étude
 
 ### Objectif de la simulation
