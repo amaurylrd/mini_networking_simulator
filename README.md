@@ -80,6 +80,8 @@ Les différentes métriques et protocoles implémentés sont :
 
 ## Résultats
 
+![Drag Racing](./ressources/results/scenario_test2_FASTEST_BUFFER.png)
+
 ## Analyse
 
 ## Conclusion
