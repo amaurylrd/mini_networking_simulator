@@ -6,8 +6,6 @@ import numpy.random as random
 
 from enum import IntEnum, unique
 
-from sklearn.metrics import average_precision_score
-
 class Graph():
     def __init__(self, filepath: str):
         """ Constructs a directed graph with the specified edges.
