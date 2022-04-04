@@ -61,7 +61,6 @@ Les débits sont tirés suivant une loi normale, autour d'une moyenne liée à l
 
 - Nous considérons que tous les paquets sont de même taille pour faciliter les statistiques (afin de ne pas avoir à faire de moyenne pondérée) ;
 - De même, les paquets sont rangés dans des files FIFO de capacité infinie.
-<br>
 
 ### Protcoles
 
