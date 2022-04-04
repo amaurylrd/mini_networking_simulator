@@ -15,16 +15,22 @@ Ci-dessous, la liste des majeures librairies utilisées :
 
 ### Démarrage
 
-La méthode main est contenue dans le fichier sources/main.py todo lien. C'est le fichier d'entrée pour lancer l'applicaton : `Usage: python sources/main.py <scenario> <options*>`.
+La méthode main est contenue dans le fichier [sources/main.py](./sources/main.py). C'est le fichier d'entrée pour lancer l'applicaton : `Usage: python sources/main.py <scenario> <options*>`.
 
 
-*scenario*: Le nom du fichier csv (sans extension). Le graph est construit à partir des données de la topolgie fournies via cet argument.
+*scenario*: Le nom du fichier csv (sans extension). Le graph est construit à partir des données de la topolgie fournies via cet argument. Le fichier doit être dans le repertoire ressources/dataframes/.
 
 *options*: Pour le moment seul l'option *time* est impactante qui indique la durée des simulations. (Si pas renseignée, la boucle tourne à l'infini).
 
 exemple: `python sources/main.py scenario_test2 time=500`
 
-directories
+### Architecture
+
+Ci-dessous la liste pour une meilleure compréhension de l'architecture du projet.
+
+1. sources : encapsule les fichiers de code ;
+2. ressources/dataframes : répertorie toutes les topologies pour les différentes simulations ;
+3. ressources/results : les graphiques sont rendus sous la forme d'image placées dans ce repertoire.
 
 -----------------
 
