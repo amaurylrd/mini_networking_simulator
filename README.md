@@ -1,18 +1,17 @@
 # Simulation et Analyse des métriques dans un réseau sans 
 
-
-
 ## Présentation du sujet d'étude
-
 
 ### Objectif de la simulation
 
 Comparer des solutions de routages capables de trouver (et choisir) le meilleur des chemin dans un système simple mais considérant des métriques différentes (parmis lesquels meilleur débit moyen, plus faible encombrement, plus court chemin, etc).
+<br>
 
 ### Consigne
 
 Examiner leurs performance sur différentes scénarii et conlure. <br>
 Poursuivre en élaborant une solution combinant les différents avantages de chacune des solutions testées.
+<br>
 
 ### Modélisation
 
@@ -28,6 +27,7 @@ Les débits sont tirés suivant une loi normale, autour d'une moyenne liée à l
 
 - Nous considérons que tous les paquets sont de même taille pour faciliter les statistiques (afin de ne pas avoir à  faire de moyenne pondérée).
 - De même, les paquets sont rangés dans des files FIFO de capacité infinie.
+<br>
 
 ### Protcoles
 
