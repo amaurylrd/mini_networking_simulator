@@ -28,7 +28,7 @@ exemple: `python sources/main.py scenario_test2 time=500`
 
 Ci-dessous la liste pour une meilleure compréhension de l'architecture du projet.
 
-1. sources : encapsule les fichiers de code ;
+1. sources/ : encapsule les fichiers de code ;
 2. ressources/dataframes : répertorie toutes les topologies pour les différentes simulations ;
 3. ressources/results : les graphiques sont rendus sous la forme d'image placées dans ce repertoire.
 
