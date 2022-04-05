@@ -119,6 +119,9 @@ Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour ch
 
 ![SCENARIO_TEST2_LSOR](./ressources/results/scenario_test2_LSOR.png){ width=50% }
 
+<img src="./ressources/results/scenario_test2_OLSR.png" width="50%">
+
+<img src="./ressources/results/scenario_test2_LSOR.png" width="50%">
 img[alt=SCENARIO_TEST2_OLSR], img[alt=SCENARIO_TEST2_LSOR] { width: 50%; }
 
 C'est un peu l'évolution de OLSR
