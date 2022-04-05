@@ -115,9 +115,9 @@ Prendre la route la plus courte est aussi un protocole simple à réfléchir. Da
 Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour choisir la meilleure route. Pour choisir, cette route, il dispose d'une valeur qui représente la portée, arbitrairement fixée à 1 (avec une portée de 0, il choisirait de manière random). Cette sélection est réitérée à chaque tick, ce qui le rend un peu plus lent. Néanmoins, il présente de meilleur résultat qu'OLSR puisqu'il peut changer de route en fonction des conditions radios. Malheureusement, il ne prend pas en compte les débits sur toute la route, ce qui le rend facile à fausser, ni de l'occupation des buffeurs.
 
 
-![SCENARIO_TEST2_OLSR](./ressources/results/scenario_test2_OLSR.png)
+![SCENARIO_TEST2_OLSR](./ressources/results/scenario_test2_OLSR.png){ width=50% }
 
-![SCENARIO_TEST2_LSOR](./ressources/results/scenario_test2_LSOR.png)
+![SCENARIO_TEST2_LSOR](./ressources/results/scenario_test2_LSOR.png){ width=50% }
 
 img[alt=SCENARIO_TEST2_OLSR], img[alt=SCENARIO_TEST2_LSOR] { width: 50%; }
 
