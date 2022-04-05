@@ -108,4 +108,11 @@ Sur une variante du même scénario avec une seule source, on peut voir que le p
 
 Prendre la route la plus courte est aussi un protocole simple à réfléchir. Dans notre cas, les distances sont directement liées au nombre de saut, puisque tous les noeuds sont distants d'un tick. Néanmoins, ce protocole ne prend pas du tout en considération les débits.
 
+![TEST4_OLSR](./ressources/results/test4_OLSR.png)
+
+### LSOR
+### MAX_BOTTLENECK
+### FASTEST_BUFFER
+### EMPTIEST_BUFFER
+
 ## Conclusion
