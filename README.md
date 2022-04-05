@@ -59,7 +59,7 @@ Les **débits sont tirés suivant une loi normale, autour d'une moyenne** fourni
 
 #### Simplifications
 
-En contraste avec le routage dans le vie réelle, on est obligé de faire plusieurs simplifications qu'on pour facilitier les simulations :
+En contraste avec le routage dans le vie réelle, on est obligé de faire plusieurs simplifications pour facilitier les simulations :
 - Nous considérons que tous les paquets sont de même taille pour faciliter les statistiques (afin de ne pas avoir à faire de moyenne pondérée) ;
 - De même, les paquets sont rangés dans des files FIFO de capacité infinie.
 
