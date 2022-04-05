@@ -249,12 +249,16 @@ class Network(Graph):
             
             if paths is None:
                 paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+            
+            if forward_range < 1:
+                return random.choice(paths)
+            
             for path in paths:
                 avg = np.mean([ self._graph[path[n]][path[n + 1]]['current_throughput'] for n in range(len(path[:forward_range + 1]) - 1) ])
                 if avg > max:
                     max = avg
                     result = path
-                    
+                
             return result
         
     def __shortest_path(self, src, dst):
