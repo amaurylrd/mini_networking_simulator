@@ -63,7 +63,7 @@ En contraste avec le routage dans le vie réelle, on est obligé de faire plusie
 - Nous considérons que tous les paquets sont de même taille pour faciliter les statistiques (afin de ne pas avoir à faire de moyenne pondérée) ;
 - De même, les paquets sont rangés dans des files FIFO de capacité infinie.
 
-### Protcoles
+### Protocoles
 
 Les différentes métriques et protocoles implémentés sont : 
 
