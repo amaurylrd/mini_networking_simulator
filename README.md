@@ -90,6 +90,6 @@ Les résultats sont présentés sur des images découpées en quatre parties :
 
 ## Analyse
 
-Toutes les simulations ci-dessuos, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
+Toutes les simulations comme ci-dessus, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
 
 ## Conclusion
