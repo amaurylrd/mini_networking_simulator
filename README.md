@@ -106,7 +106,7 @@ Sur une variante du même scénario avec une seule source, on peut voir que le p
 
 ### SHORTEST_PATH
 
-Prendre la route la plus courte est aussi un protocole simple à réfléchir. Dans notre cas, les distances sont directement liées au nombre de saut, puisque tous les noeuds sont distants d'un tick. Néanmoins, ce protocole ne prend pas du tout en considération les débits.
+Prendre la route la plus courte est aussi un protocole simple à réfléchir. Dans notre cas, les distances sont directement liées au nombre de sauts, puisque tous les noeuds sont distants d'un tick. Néanmoins, ce protocole ne prend pas du tout en considération les débits. Il serait donc très facile de le même en défaut sur une topologie qui associe le plus court chemin à un débit ridiculement faible.
 
 ![TEST4_OLSR](./ressources/results/test4_SHORTEST_PATH.png)
 
