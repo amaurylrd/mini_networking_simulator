@@ -92,8 +92,12 @@ Les résultats sont présentés sur des images découpées en quatre parties :
 
 Toutes les simulations comme ci-dessus, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
 
-0. OLSR
+### OLSR
 
-Innocemment, le protocole OLSR est le premier qui nous vient en tête. Il a l'avantage d'être très simple à comprendre et très évoquant. En réalité, bien qu'il ne prenne pas en compte les débits réels ou les goulots d'étranglement, il maintient une certaine stabilité face à la surchage pour les topologies simples. Dès qu'on introduit plusieurs émetteurs, il est vite dépassé. Le défaut majeur de mon implémentation pour ce protocole et lié à son fonctionnement : il peut favoriser un chemin très long car il a une meilleur moyenne. Aussi, OLSR fait partie des protocoles qui doivent retenir la route dans une table de routage, et les rendent très statiques. 
+Innocemment, le protocole OLSR est le premier qui nous vient en tête. Il a l'avantage d'être très simple à comprendre et très évoquant. En réalité, bien qu'il ne prenne pas en compte les débits réels ou les goulots d'étranglement, il maintient une certaine stabilité face à la surchage pour les topologies simples. En revanche, dès qu'on introduit plusieurs émetteurs, il est vite dépassé. Le défaut majeur de mon implémentation pour ce protocole et lié à son fonctionnement : il peut favoriser un chemin très long car il a une meilleur moyenne. Aussi, OLSR fait partie des protocoles qui doivent retenir leur route dans une table de routage, ces protocoles sont très statiques. 
+
+### SHORTEST_PATH
+
+Prendre la route la plus courte est aussi un protocole simple à réfléchir. Dans notre cas, les distances sont directement liées au nombre de saut, puisque tous les noeuds sont distants d'un tick. Néanmoins, ce protocole ne prend pas du tout en considération les débits.
 
 ## Conclusion
