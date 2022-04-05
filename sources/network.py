@@ -314,11 +314,11 @@ class Network(Graph):
         ranks = [ i for i in range(len(paths)) ] # for the shortest path
         
         for func in funcs:
-            list = paths[:]
+            tmp = paths[:]
             for i in range(len(ranks)):
-                path = func(src, dst, list)
+                path = func(src, dst, tmp)
                 ranks[paths.index(path)] += i
-                list.remove(path)
+                tmp.remove(path)
             
         return paths[ranks.index(min(ranks))]
         
