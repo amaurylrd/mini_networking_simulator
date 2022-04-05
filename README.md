@@ -86,10 +86,25 @@ Les résultats sont présentés sur des images découpées en quatre parties :
 3. (en bas à gauche) un graphique qui montre le pourcentage de paquets à destination par utilisateur ;
 4. (en bas à droite) un graphique qui montre la moyenne de paquets dans les buffers.
 
-![Drag Racing](./ressources/results/test3_FASTEST_BUFFER.png)
+![TEST3_FASTEST_BUFFER](./ressources/results/test3_FASTEST_BUFFER.png)
 
 ## Analyse
 
-Toutes les simulations ci-dessuos, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
+Toutes les simulations comme ci-dessus, tournent sur 500 ticks et la génération de paquets va de 10 à 100 avec un pas de 5.
+
+### OLSR
+
+Innocemment, le protocole OLSR est le premier qui nous vient en tête. Il a l'avantage d'être très simple à comprendre et très évoquant. En réalité, bien qu'il ne prenne pas en compte les débits réels ou les goulots d'étranglement, il maintient une certaine stabilité face à la surchage pour les topologies simples. En revanche, dès qu'on introduit plusieurs émetteurs, il est vite dépassé. Le défaut majeur de mon implémentation pour ce protocole et lié à son fonctionnement : il peut favoriser un chemin très long car il a une meilleur moyenne. Aussi, OLSR fait partie des protocoles qui doivent retenir leur route dans une table de routage, ces protocoles sont très statiques.
+
+![TEST3_OLSR](./ressources/results/test3_OLSR.png)
+
+On peut voir dans cette simulation, que les deux émetteurs vont prendre quasiment le même chemin, ce qui conduit à congestioner très rapidement le réseau.
+On remarque aussi que la simpliciter du protocole et son routage mono-route, le rend plus enclin aux situations de congestion.
+
+
+
+### SHORTEST_PATH
+
+Prendre la route la plus courte est aussi un protocole simple à réfléchir. Dans notre cas, les distances sont directement liées au nombre de saut, puisque tous les noeuds sont distants d'un tick. Néanmoins, ce protocole ne prend pas du tout en considération les débits.
 
 ## Conclusion
