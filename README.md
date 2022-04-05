@@ -100,8 +100,9 @@ Innocemment, le protocole OLSR est le premier qui nous vient en tête. Il a l'av
 
 On peut voir dans cette simulation, que les deux émetteurs vont prendre quasiment le même chemin, ce qui conduit à congestioner très rapidement le réseau.
 On remarque aussi que la simpliciter du protocole et son routage mono-route, le rend plus enclin aux situations de congestion.
+Sur une variante du même scénario avec une seule source, on peut voir que le protocole a de meilleurs résulats.
 
-
+![TEST4_OLSR](./ressources/results/test4_OLSR.png)
 
 ### SHORTEST_PATH
 
