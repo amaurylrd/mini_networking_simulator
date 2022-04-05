@@ -55,7 +55,7 @@ La simulation est temps discret, elle dure un nombre pré-déterminé de ticks (
 
 La route que vont emprunter les paquets est décidée en fonction du protocole de routage, soit au début de la simulation, soit depuis les noeuds à chaque tick, pour chaque couple (source, destination). Les buffers des noeuds sont des files FIFO dont l'ordre est respecté inconditionnellement.
 
-Les débits sont tirés suivant une loi normale, autour d'une moyenne fournie dans les données de la topologie pour imiter naïvement les conditions radio dans le réseau. Ces tirges aléatoires sont indépendents entre les différents réseaux de la simulation.
+Les débits sont tirés suivant une loi normale, autour d'une moyenne fournie dans les données de la topologie pour imiter naïvement les conditions radio dans le réseau. À noter que ces tirges aléatoires sont indépendents entre les différents réseaux de la simulation.
 
 #### Simplifications
 
