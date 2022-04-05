@@ -112,7 +112,7 @@ Prendre la route la plus courte est aussi un protocole simple à réfléchir. Da
 
 ### LSOR
 
-Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour choisir la meilleure route. Pour choisir, cette route, il dispose d'une valeur qui représente la portée. Avec une portée de 0, il choisirait de manière random 
+Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour choisir la meilleure route. Pour choisir, cette route, il dispose d'une valeur qui représente la portée, arbitrairement fixée à 1 (avec une portée de 0, il choisirait de manière random).
 
 C'est un peu l'évolution de OLSR
 
