@@ -49,13 +49,13 @@ Comparer des solutions de routages capables de trouver (et choisir) le meilleur 
 
 ### Modélisation
 
-Le programme lance autant de simulations qu'il y a de  protocoles, toutes sur la même topologie initiale. Donc chaque protocole a son instance du réseau dédiée dans laquelle à chaque tick sont générés des paquets depuis les sources vers leur destination. Le nombre de paquets créés varie selon la charge moyenne – ce nombre est tiré aléatoirement entre zero et deux fois la charge.
+Le programme lance autant de simulations qu'il y a de  protocoles, toutes sur la même topologie initiale. Donc chaque protocole a son instance du réseau dédiée dans laquelle à chaque tick sont générés des paquets depuis les sources vers leur destination. Le nombre de paquets créés varie selon la charge moyenne – ce nombre est tiré aléatoirement entre zero et deux fois la charge. En somme, la production de paquets varie autour de cette moyenne afin de recréer des problèmes de congestion temporaire.
 
 La simulation est temps discret, elle dure un nombre pré-déterminé de ticks (cf. Démarrage). En principe, un tick représente la variation entre deux états consécutifs mais, ici, c'est l'unité de temps de la simulation. En effet, le nombre de tick de la simulation correspond au nombre de générations. Plus concrètement, un tick représente aussi le temps d'un saut entre deux noeuds du réseau. C'est aussi un outil de mesure, par exemple, les paquets sont estampilés à leur création afin de calculer le délai une fois à destination.
 
 La route que vont emprunter les paquets est décidée en fonction du protocole de routage, soit au début de la simulation, soit depuis les noeuds à chaque tick, pour chaque couple (source, destination). Les buffers des noeuds sont des files FIFO dont l'ordre est respecté inconditionnellement.
 
-Les débits sont tirés suivant une loi normale, autour d'une moyenne liée à la topologie pour prendre en compte les conditions radio dans le réseau. Ces tirges aléatoires sont indépendents entre les différents réseaux de la simulation.
+Les débits sont tirés suivant une loi normale, autour d'une moyenne fournie dans les données de la topologie pour imiter naïvement les conditions radio dans le réseau. Ces tirges aléatoires sont indépendents entre les différents réseaux de la simulation.
 
 #### Simplifications
 
