@@ -131,9 +131,9 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 
 ## Conclusion
 
-Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
-
 ### SOLUTION HYBRIDE
+
+Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
 
 ```python
 def __hybrid_solution(self, src, dst):
@@ -155,3 +155,6 @@ def __hybrid_solution(self, src, dst):
             
         return paths[ranks.index(min(ranks))]
 ```
+
+En conclusion, on peut dire qu'il est très difficile de choisir un protocole pour un réseau. Tout dépend de la topologie et du contexte. Il faut prendre en compte le nombre d'émetteurs, le nombre de noeuds, les débits, la charge dans le réseau... Il serait peut-être intéressant de changer de protocole en fonction de la charge.
+Enfin, on a pu voir que proposer une solution hybride n'est pas des plus simples aussi. Les algortihmes les plus simples sont parfois aussi bons.
