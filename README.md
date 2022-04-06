@@ -122,7 +122,7 @@ Ci-dessous, les résultats pour les protocoles OLSR (la première image) et LSOR
 
 ### MAX_BOTTLENECK
 
-Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goulot d'étranglement pour maximiser le flux. Dans son implémentation, cette route est décidée à l'initialisation de la connexion. 
+Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goulot d'étranglement pour maximiser le flux. Dans son implémentation, cette route est décidée à l'initialisation de la connexion. Cet algortihme est très fluide et permet d'utiliser au mieux les débits de la topologie. Il montre de très bon résultats sur le taux d'occupation des buffers.
 
 ![SCENARIO_TEST2_MAX_BOTTLENECK](./ressources/results/scenario_test2_MAX_BOTTLENECK.png)
 
@@ -130,6 +130,8 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 ### EMPTIEST_BUFFER
 
 ## Conclusion
+
+Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
 
 ### SOLUTION HYBRIDE
 
