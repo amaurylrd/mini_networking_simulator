@@ -130,3 +130,25 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 ### EMPTIEST_BUFFER
 
 ## Conclusion
+
+### SOLUTION HYBRIDE
+
+``python
+def __hybrid_solution(self, src, dst):
+        funcs = {
+            lambda src, dst, paths: self.__lsor(src, dst, 2, paths),
+            self.__path_max_bottleneck,
+            self.__path_fastest_buffer
+        }
+        
+        paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+        ranks = [ i for i in range(len(paths)) ] # for the shortest path
+        
+        for func in funcs:
+            tmp = paths[:]
+            for i in range(len(ranks)):
+                path = func(src, dst, tmp)
+                ranks[paths.index(path)] += i
+                tmp.remove(path)
+            
+        return paths[ranks.index(min(ranks))]``
