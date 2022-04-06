@@ -121,6 +121,11 @@ Ci-dessous, les résultats pour les protocoles OLSR (la première image) et LSOR
 ![SCENARIO_TEST2_LSOR](./ressources/results/scenario_test2_LSOR.png)
 
 ### MAX_BOTTLENECK
+
+Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goutlot d'étranglement, ce qui maximise le flux. 
+
+![SCENARIO_TEST2_MAX_BOTTLENECK](./ressources/results/scenario_test2_MAX_BOTTLENECK.png)
+
 ### FASTEST_BUFFER
 ### EMPTIEST_BUFFER
 
