@@ -6,7 +6,7 @@
 
 Version de python utilisé : `Python 3.10.2`
 
-Ci-dessous, la liste des majeures librairies utilisées :
+Ci-dessous, la liste des principales librairies utilisées :
 1. [numpy](https://numpy.org/) pour la génération de nombre pseudo-aléatoire ;
 2. [pandas](https://pandas.pydata.org/) pour la lecture des scénarii au format csv ;
 3. [network](https://networkx.org/) pour la manpilation de graph ;
