@@ -122,7 +122,7 @@ Ci-dessous, les résultats pour les protocoles OLSR (la première image) et LSOR
 
 ### MAX_BOTTLENECK
 
-Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goutlot d'étranglement, ce qui maximise le flux. 
+Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goulot d'étranglement pour maximiser le flux. Dans son implémentation, cette route est décidée à l'initialisation de la connexion. 
 
 ![SCENARIO_TEST2_MAX_BOTTLENECK](./ressources/results/scenario_test2_MAX_BOTTLENECK.png)
 
