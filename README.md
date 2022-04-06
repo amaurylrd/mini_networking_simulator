@@ -133,7 +133,7 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 
 ### SOLUTION HYBRIDE
 
-``python
+```python
 def __hybrid_solution(self, src, dst):
         funcs = {
             lambda src, dst, paths: self.__lsor(src, dst, 2, paths),
@@ -151,4 +151,5 @@ def __hybrid_solution(self, src, dst):
                 ranks[paths.index(path)] += i
                 tmp.remove(path)
             
-        return paths[ranks.index(min(ranks))]``
+        return paths[ranks.index(min(ranks))]
+```
