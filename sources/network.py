@@ -65,7 +65,7 @@ class Network(Graph):
         MAX_BOTTLENECK = 3
         FASTEST_BUFFER = 4
         EMPTIEST_BUFFER = 5
-        HYDRBID = 6
+        HYBRID = 6
         
     class _Node():
         def __init__(self, node_name):
@@ -344,7 +344,7 @@ class Network(Graph):
             self.Protocol.LSOR: self.__lsor,
             self.Protocol.FASTEST_BUFFER: self.__path_fastest_buffer,
             self.Protocol.EMPTIEST_BUFFER: self.__path_min_buffer,
-            self.Protocol.HYDRBID: self.__hybrid_solution
+            self.Protocol.HYBRID: self.__hybrid_solution
         }
         
         paths = dict(self._paths)
