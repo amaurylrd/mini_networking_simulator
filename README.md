@@ -1,4 +1,4 @@
-# Simulation et Analyse des métriques dans un réseau sans 
+# Simulation et Analyse des métriques dans un réseau 5G
 
 ## Note developpeur
 
@@ -6,7 +6,7 @@
 
 Version de python utilisé : `Python 3.10.2`
 
-Ci-dessous, la liste des majeures librairies utilisées :
+Ci-dessous, la liste des principales librairies utilisées :
 1. [numpy](https://numpy.org/) pour la génération de nombre pseudo-aléatoire ;
 2. [pandas](https://pandas.pydata.org/) pour la lecture des scénarii au format csv ;
 3. [network](https://networkx.org/) pour la manpilation de graph ;
@@ -112,12 +112,49 @@ Prendre la route la plus courte est aussi un protocole simple à réfléchir. Da
 
 ### LSOR
 
-Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour choisir la meilleure route. Pour choisir, cette route, il dispose d'une valeur qui représente la portée. Avec une portée de 0, il choisirait de manière random 
+Le protocole LSOR, pour rappel, s'appuie sur les débits à l'instant t, pour choisir la meilleure route. Pour choisir, cette route, il dispose d'une valeur qui représente la portée, arbitrairement fixée à 1 (avec une portée de 0, il choisirait de manière random). Cette sélection est réitérée à chaque tick, ce qui le rend un peu plus lent. Néanmoins, il présente de meilleur résultat qu'OLSR puisqu'il peut changer de route en fonction des conditions radios. Malheureusement, il ne prend pas en compte les débits sur toute la route, ce qui le rend facile à fausser, ni de l'occupation des buffeurs.
 
-C'est un peu l'évolution de OLSR
+Ci-dessous, les résultats pour les protocoles OLSR (la première image) et LSOR (la seconde image) en vis à vis. 
+
+![SCENARIO_TEST2_OLSR](./ressources/results/scenario_test2_OLSR.png)
+
+![SCENARIO_TEST2_LSOR](./ressources/results/scenario_test2_LSOR.png)
 
 ### MAX_BOTTLENECK
+
+Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On pourrait donc imaginer deux versions de ce protocoles, une sur les débits moyens et une autre sur les débits réels. En pratique, il sélectionne la route à qui a le plus grand goulot d'étranglement pour maximiser le flux. Dans son implémentation, cette route est décidée à l'initialisation de la connexion. Cet algortihme est très fluide et permet d'utiliser au mieux les débits de la topologie. Il montre de très bon résultats sur le taux d'occupation des buffers.
+
+![SCENARIO_TEST2_MAX_BOTTLENECK](./ressources/results/scenario_test2_MAX_BOTTLENECK.png)
+
 ### FASTEST_BUFFER
 ### EMPTIEST_BUFFER
 
 ## Conclusion
+
+### SOLUTION HYBRIDE
+
+Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
+
+```python
+def __hybrid_solution(self, src, dst):
+        funcs = {
+            lambda src, dst, paths: self.__lsor(src, dst, 2, paths),
+            self.__path_max_bottleneck,
+            self.__path_fastest_buffer
+        }
+        
+        paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
+        ranks = [ i for i in range(len(paths)) ] # for the shortest path
+        
+        for func in funcs:
+            tmp = paths[:]
+            for i in range(len(ranks)):
+                path = func(src, dst, tmp)
+                ranks[paths.index(path)] += i
+                tmp.remove(path)
+            
+        return paths[ranks.index(min(ranks))]
+```
+
+En conclusion, on peut dire qu'il est très difficile de choisir un protocole pour un réseau. Tout dépend de la topologie et du contexte. Il faut prendre en compte le nombre d'émetteurs, le nombre de noeuds, les débits, la charge dans le réseau... Il serait peut-être intéressant de changer de protocole en fonction de la charge.
+Enfin, on a pu voir que proposer une solution hybride n'est pas des plus simples aussi. Les algortihmes les plus simples sont parfois aussi bons.
