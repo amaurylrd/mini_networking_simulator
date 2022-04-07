@@ -132,7 +132,7 @@ Ce protocole est intéressant car il équilibre la charge dans le réseau. Il va
 
 ![TEST4_FASTEST_BUFFER](./ressources/results/test4_FASTEST_BUFFER.png)
 
-En réalité, ce protocole peut certes répondre à la congestion, mais il est vite dépassé.
+En réalité, ce protocole peut certes répondre à des problème de surcharge, mais il est vite dépassé par le nombre de chemins ou les topologies avec plusieurs sources.
 
 ### EMPTIEST_BUFFER
 
