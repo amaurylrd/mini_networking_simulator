@@ -127,13 +127,20 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 ![SCENARIO_TEST2_MAX_BOTTLENECK](./ressources/results/scenario_test2_MAX_BOTTLENECK.png)
 
 ### FASTEST_BUFFER
+
+Ce protocole est intéressant car il équilibre la charge dans le réseau. Il va choisir la route qui est la plus rapide en regardant l'ancienneté des paquets dans les buffers (plus précisément, le tick de création du premier paquet en tête de file). En effet, quand un noeud est trop long à faire le relai, il est laissé le temps qu'il évacue les paquets encombrants. Le protocole propose ainsi une solution avec du multi-path, et une réponse à la congestion. On pourrait pourquoi pas imaginer une variante qui prendrait en compte le temps passer dans le buffer.
+
+![TEST4_FASTEST_BUFFER](./ressources/results/test4_FASTEST_BUFFER.png)
+
+En réalité, ce protocole peut certes répondre à la congestion, mais il est vite dépassé.
+
 ### EMPTIEST_BUFFER
+
+Dans ce protocole, la route est choisie en fonction du taux d'occupation des buffers. En théorie, plus un buffer est vide, plus il est efficace.
 
 ## Conclusion
 
 ### SOLUTION HYBRIDE
-
-Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
 
 ```python
 def __hybrid_solution(self, src, dst):
@@ -155,6 +162,10 @@ def __hybrid_solution(self, src, dst):
             
         return paths[ranks.index(min(ranks))]
 ```
+
+Pour la solution hybride, on peut essayer de fusionner les protocoles qui donnent les meilleurs résultats. On peut même pousser leur performances, par exemple, en fixant la portée du protocole LSOR à deux voisins ou en implémentant le protocole MAX_BOTTLENECK à chaque tick. Logiquement, cet algorithme est bien plus complexe, et demande beaucoup plus de ressource à mettre en oeuvre. Néanmoins, il n'est pas meilleur que les autres algorithmes aux statistiques.
+
+![SCENARIO_TEST2_HYBRID](./ressources/results/scenario_test2_HYBRID.png)
 
 ![SCENARIO_TEST2_ALL](./ressources/results/scenario_test2_ALL.png)
 
