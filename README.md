@@ -130,6 +130,10 @@ Ce protocole s'appuie sur les valeurs des débits pour choisir son chemin. On po
 
 Ce protocole est intéressant car il équilibre la charge dans le réseau. Il va choisir la route qui est la plus rapide en regardant l'ancienneté des paquets dans les buffers (plus précisément, le tick de création du premier paquet en tête de file). En effet, quand un noeud est trop long à faire le relai, il est laissé le temps qu'il évacue les paquets encombrants. Le protocole propose ainsi une solution avec du multi-path, et une réponse à la congestion. On pourrait pourquoi pas imaginer une variante qui prendrait en compte le temps passer dans le buffer.
 
+![TEST4_FASTEST_BUFFER](./ressources/results/test4_FASTEST_BUFFER.png)
+
+En réalité, ce protocole peut certes répondre à la congestion, mais il est vite dépassé.
+
 ### EMPTIEST_BUFFER
 
 Dans ce protocole, la route est choisie en fonction du taux d'occupation des buffers. En théorie, plus un buffer est vide, plus il est efficace.
