@@ -136,7 +136,7 @@ En réalité, ce protocole peut certes répondre à des problème de surcharge, 
 
 ### EMPTIEST_BUFFER
 
-Ce protocole propose lui aussi une approche basé sur le taux d'occupation dans les buffers. Dans ce protocole particulier, la route est choisie directement en fonction de ce taux d'occupation des buffers. En théorie, plus un buffer est vide, plus il est efficace donc il cible les voisins qui ont les buffers les plus vides. 
+Ce protocole propose lui aussi une approche basé sur le taux d'occupation dans les buffers. Dans ce protocole particulier, la route est choisie directement en fonction de ce taux d'occupation des buffers. En théorie, plus un buffer est vide, plus il est efficace donc il cible les voisins qui ont les buffers les plus vides. En conclusion, il s'adapte en fonction des conditions du réseau en temps réel pour essayer d'équilibrer la charge sur plusieurs routes.
 
 ![TEST3_EMPTIEST_BUFFER](./ressources/results/test3_EMPTIEST_BUFFER.png)
 
