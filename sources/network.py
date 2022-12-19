@@ -74,9 +74,7 @@ class Network(Graph):
             self.packages_out = [] # packages that will be sent
         
         def __eq__(self, other):
-            if isinstance(other, type(self)):
-                return self.name == other.name
-            return False
+            return self.name == other.name if isinstance(other, type(self)) else False
         
         def set_packages_in(self, packages: list):
             """ Adds the specified packages at the end of the buffer.
@@ -184,26 +182,26 @@ class Network(Graph):
         # current throughput is randomized around its average_throughput
         for (u, v, w) in self.get_weighted_edges():
             nx.set_edge_attributes(self._graph, {(u, v): { 'current_throughput': max(0, int(random.normal(w, np.sqrt(w)))) }})
-        
+
         # generates n packages for each node source
         for (u, v) in self._emitters:
             packages = [ p | { 'from': u, 'to': v, 'sent': tick } for p in self.generate_packages(100, load) ]
             self._nodes[u].set_packages_out(packages)
             self._statistics_tmp[(u, v)]['package_sent'] += len(packages)
-        
+
         # moves the packages according to the path given by the routing algorithm
         for name, node in self._nodes.items():
             nexts = {}
-            for (src, dst) in set([ (p['from'], p['to']) for p in node.packages_out ]):
+            for (src, dst) in {(p['from'], p['to']) for p in node.packages_out}:
                 nexts[(src, dst)] = self.__process_next(src, dst, name)
-            
+
             throughput_nexts = { next: self._graph[name][next]['current_throughput'] for next in set(nexts.values()) }
-            
+
             while node.packages_out and throughput_nexts[nexts[(node.packages_out[-1]['from'], node.packages_out[-1]['to'])]] > 0:
                 package = node.packages_out.pop(0)
                 throughput_nexts[nexts[(package['from'], package['to'])]] -= 1
                 self._nodes[nexts[(package['from'], package['to'])]].set_packages_in([package])
-        
+
         # moves the packages from 'reception' to 'ready_to_send' queue and retrieves the data from packages arrived before deletion
         for name, node in self._nodes.items():
             for package in node.packages_in:
@@ -292,18 +290,17 @@ class Network(Graph):
         
     def __path_fastest_buffer(self, src, dst, paths=None):
         result, max = None, -1
-        
+
         if paths is None:
             paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
         for path in paths:
             node = self._nodes[path[1]]
             if not node.packages_out:
                 return path
-            else:
-                tick = node.packages_out[0]['sent']
-                if tick > max:
-                    max = tick
-                    result = path
+            tick = node.packages_out[0]['sent']
+            if tick > max:
+                max = tick
+                result = path
 
         return result
     
@@ -313,17 +310,17 @@ class Network(Graph):
             self.__path_max_bottleneck,
             self.__path_fastest_buffer
         }
-        
+
         paths = sorted(nx.all_simple_paths(self._graph, src, dst), key=len)
-        ranks = [ i for i in range(len(paths)) ] # for the shortest path
-        
+        ranks = list(range(len(paths)))
+
         for func in funcs:
             tmp = paths[:]
             for i in range(len(ranks)):
                 path = func(src, dst, tmp)
                 ranks[paths.index(path)] += i
                 tmp.remove(path)
-            
+
         return paths[ranks.index(min(ranks))]
         
     def __setup(self, protocol):
